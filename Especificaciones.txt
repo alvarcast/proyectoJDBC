@@ -1,0 +1,15 @@
+Práctica jdbc
+
+OBLIGATORIO
+1. CRUD
+2. Mostrar todos los datos (SQL Join)
+3. Buscar por fechas
+4. Buscar registros rotos (registros no bien vinculados)
+5. Buscador tipo google (palabra coje todas los caracteres)
+
+EXTRA
+1. Propuesta
+2. Export SQL
+
+LA BD TIENE QUE TENER RELACIONES M:N / 1:N Y 1:M
+4 ENTIDADES MÍNIMO (INCLUIDA LA TABLA DE LA RELACIÓN N:M)
