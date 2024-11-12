@@ -6,7 +6,6 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.SQLException;
-import java.util.Objects;
 
 public class DataBase {
 
@@ -61,41 +60,19 @@ public class DataBase {
         this.servername = servername;
     }
 
-    @Override
-    public String toString() {
-        return "Db{" +
-                "username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", database='" + database + '\'' +
-                ", servername='" + servername + '\'' +
-                '}';
-    }
+    public ResultSet consult(String sql, boolean view) {
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        DataBase db = (DataBase) o;
-        return Objects.equals(username, db.username) && Objects.equals(password, db.password) && Objects.equals(database, db.database) && Objects.equals(servername, db.servername);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(username, password, database, servername);
-    }
-
-    public void consult(String sql, boolean view) {
-
-        Connection conexion = null;
-        Statement sentenciaSQL;
+        Connection connection = null;
+        ResultSet rs = null;
+        Statement query;
 
         try {
             //Conectar con la base de datos
             Class.forName("com.mysql.jdbc.Driver");
-            conexion = DriverManager.getConnection("jdbc:mysql://" + servername + "/" + database, username, password);
+            connection = DriverManager.getConnection("jdbc:mysql://" + servername + "/" + database, username, password);
 
-            sentenciaSQL = conexion.createStatement();
-            ResultSet rs = sentenciaSQL.executeQuery(sql);
+            query = connection.createStatement();
+            rs = query.executeQuery(sql);
 
             System.out.println("Consulta realizada correctamente");
 
@@ -107,12 +84,13 @@ public class DataBase {
             ex.printStackTrace();
         }finally {
             try{
-                if (conexion != null){
-                    conexion.close();
+                if (connection != null){
+                    connection.close();
                 }
             } catch (SQLException ex) {
                 ex.printStackTrace();
             }
         }
+        return rs;
     }
 }

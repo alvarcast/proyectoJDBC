@@ -45,6 +45,17 @@ public class DbController {
 
     }
 
+    public static boolean checkDupe(String table, String tableReturn, String column, String param){
+        DataBase db = new DataBase("user","1234","farmacos");
+        String query = "SELECT " + tableReturn + " FROM " + table + " WHERE " + column + " = " + param;
+        if (db.consult(query, false) == null){
+            return false;
+        } else {
+            System.err.println("That " + column + " is already in use, please try again.");
+            return true;
+        }
+    }
+
     private static void connect(String consult, boolean view){
         DataBase db = new DataBase("user","1234","farmacos");
         db.consult(consult, view);
