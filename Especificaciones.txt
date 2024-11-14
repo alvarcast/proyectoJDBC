@@ -10,6 +10,7 @@ OBLIGATORIO
 EXTRA
 1. Propuesta
 2. Export SQL
+3. Blacklist de usuarios malardos
 
 LA BD TIENE QUE TENER RELACIONES M:N / 1:N Y 1:M
 4 ENTIDADES MÍNIMO (INCLUIDA LA TABLA DE LA RELACIÓN N:M)
@@ -24,4 +25,4 @@ MENÚ
 7. Find broken entries
 8. Export DB SQL
 
-T = 2.5h
+T = 4.5h

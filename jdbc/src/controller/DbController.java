@@ -1,8 +1,9 @@
 package controller;
 
-import model.DataBase;
+import model.SingletonDB;
 import view.Scan;
 
+import java.sql.*;
 import java.util.ArrayList;
 
 public class DbController {
@@ -22,7 +23,6 @@ public class DbController {
             }
         } while (!cond);
 
-        connect(consult, true);
     }
 
     public static void create(String tablename, ArrayList<String> data){
@@ -46,18 +46,61 @@ public class DbController {
     }
 
     public static boolean checkDupe(String table, String tableReturn, String column, String param){
-        DataBase db = new DataBase("user","1234","farmacos");
-        String query = "SELECT " + tableReturn + " FROM " + table + " WHERE " + column + " = " + param;
-        if (db.consult(query, false) == null){
-            return false;
-        } else {
-            System.err.println("That " + column + " is already in use, please try again.");
-            return true;
+        String query = "SELECT " + tableReturn + " FROM " + table + " WHERE " + column + " = '" + param + "';";
+        ResultSet rs = DbController.runSQL(query, false, true);
+        boolean dupe = true;
+
+        try {
+            if (rs.next()){
+                System.err.println("That " + column + " is already in use, please try again.");
+            } else {
+                dupe = false;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+
+        return dupe;
     }
 
-    private static void connect(String consult, boolean view){
-        DataBase db = new DataBase("user","1234","farmacos");
-        db.consult(consult, view);
+    public static ResultSet runSQL(String sql, boolean view, boolean execQuery) {
+
+        SingletonDB instance = SingletonDB.getInstance();
+
+        Connection connection = null;
+        ResultSet rs = null;
+        Statement query;
+
+        try {
+            //Conectar con la base de datos
+            Class.forName("com.mysql.jdbc.Driver");
+            connection = DriverManager.getConnection("jdbc:mysql://" + instance.getServername() + "/" + instance.getDatabase(), instance.getUsername(), instance.getPassword());
+
+            query = connection.createStatement();
+
+            if (execQuery){
+                rs = query.executeQuery(sql);
+            } else {
+                query.executeUpdate(sql);
+            }
+
+            if (view){
+                //Imprimir select
+            }
+
+        } catch (SQLException | ClassNotFoundException ex) {
+            ex.printStackTrace();
+        }
+        return rs;
+    }
+
+    public static void disconnect(Connection connection){
+        try{
+            if (connection != null){
+                connection.close();
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
     }
 }

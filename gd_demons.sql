@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 12-11-2024 a las 10:32:18
+-- Tiempo de generación: 14-11-2024 a las 15:35:36
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.0.30
 
@@ -36,6 +36,18 @@ CREATE TABLE `beaten_level` (
   `enjoyment` float NOT NULL,
   `total_attempts` int(11) NOT NULL,
   `end_date` date NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `fav_levels`
+--
+
+CREATE TABLE `fav_levels` (
+  `id` int(11) NOT NULL,
+  `uid` int(11) NOT NULL,
+  `lid` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- --------------------------------------------------------
@@ -81,6 +93,14 @@ CREATE TABLE `personal_info` (
   `rec_email` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
+--
+-- Volcado de datos para la tabla `personal_info`
+--
+
+INSERT INTO `personal_info` (`uid`, `name`, `surname`, `email`, `rec_email`) VALUES
+(5, 'Alvaro', 'Aguado', 'alvaroaguado05@gmail.com', 'alvaroaguado05@outlook.es'),
+(6, 'Joe', 'Escobedo', 'joe@gmail.com', 'joe2@gmail.com');
+
 -- --------------------------------------------------------
 
 --
@@ -92,6 +112,14 @@ CREATE TABLE `user` (
   `username` varchar(50) NOT NULL,
   `password` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Volcado de datos para la tabla `user`
+--
+
+INSERT INTO `user` (`id`, `username`, `password`) VALUES
+(5, 'alvarcast', '1234'),
+(6, 'Xx_Joe-Biden69_xX', '1234');
 
 -- --------------------------------------------------------
 
@@ -113,6 +141,14 @@ CREATE TABLE `user_level` (
 --
 ALTER TABLE `beaten_level`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `fav_levels`
+--
+ALTER TABLE `fav_levels`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `uid` (`uid`),
+  ADD KEY `lid` (`lid`);
 
 --
 -- Indices de la tabla `level`
@@ -157,6 +193,12 @@ ALTER TABLE `beaten_level`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT de la tabla `fav_levels`
+--
+ALTER TABLE `fav_levels`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT de la tabla `level`
 --
 ALTER TABLE `level`
@@ -166,11 +208,18 @@ ALTER TABLE `level`
 -- AUTO_INCREMENT de la tabla `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Restricciones para tablas volcadas
 --
+
+--
+-- Filtros para la tabla `fav_levels`
+--
+ALTER TABLE `fav_levels`
+  ADD CONSTRAINT `fav_levels_ibfk_1` FOREIGN KEY (`uid`) REFERENCES `user` (`id`),
+  ADD CONSTRAINT `fav_levels_ibfk_2` FOREIGN KEY (`lid`) REFERENCES `level` (`id`);
 
 --
 -- Filtros para la tabla `level_beaten_level`
