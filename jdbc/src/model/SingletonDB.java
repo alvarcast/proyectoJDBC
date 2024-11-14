@@ -16,9 +16,23 @@ public final class SingletonDB {
         this.servername = "localhost";
     }
 
+    public SingletonDB(String username, String password, String database, String servername) {
+        this.username = username;
+        this.password = password;
+        this.database = database;
+        this.servername = servername;
+    }
+
     public static SingletonDB getInstance() {
         if (instance == null) {
             instance = new SingletonDB();
+        }
+        return instance;
+    }
+
+    public static SingletonDB getInstance(String username, String password, String database, String servername) {
+        if (instance == null) {
+            instance = new SingletonDB(username, password, database, servername);
         }
         return instance;
     }
