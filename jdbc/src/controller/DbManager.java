@@ -1,27 +1,15 @@
 package controller;
 
+import model.Connex;
 import model.SingletonDB;
-import view.Scan;
 
 import java.sql.*;
 import java.util.ArrayList;
 
-public class DbController {
+public class DbManager {
 
     public static void select(){
-        String pattern = "(?i)\\s*SELECT\\s+.*\\s+FROM\\s+\\w+(\\s+WHERE\\s+.*)?\\s*;?\\s*";
-        String consult;
-        boolean cond;
 
-        do{
-            consult = Scan.scanText("Introduzca la sentencia SQL (Select):");
-
-            cond = consult.matches(pattern);
-
-            if (!cond){
-                System.err.println("La sentencia introducida no es un SELECT, por favor, inténtelo de nuevo");
-            }
-        } while (!cond);
 
     }
 
@@ -47,7 +35,7 @@ public class DbController {
 
     public static boolean checkDupe(String table, String tableReturn, String column, String param){
         String query = "SELECT " + tableReturn + " FROM " + table + " WHERE " + column + " = '" + param + "';";
-        ResultSet rs = DbController.runSQL(query, false, true);
+        ResultSet rs = DbManager.runSQL(query, false, true);
         boolean dupe = true;
 
         try {
@@ -65,18 +53,19 @@ public class DbController {
 
     public static ResultSet runSQL(String sql, boolean view, boolean execQuery) {
 
-        SingletonDB instance = SingletonDB.getInstance();
+        SingletonDB db_instance = SingletonDB.getInstance();
+        Connex connex_instance;
 
-        Connection connection = null;
+        Connection connection;
         ResultSet rs = null;
         Statement query;
 
         try {
             //Conectar con la base de datos
             Class.forName("com.mysql.jdbc.Driver");
-            connection = DriverManager.getConnection("jdbc:mysql://" + instance.getServername() + "/" + instance.getDatabase(), instance.getUsername(), instance.getPassword());
+            connex_instance = Connex.getInstance(db_instance.getUsername(), db_instance.getPassword(), db_instance.getDatabase(), db_instance.getServername());
 
-            query = connection.createStatement();
+            query = connex_instance.getConnection().createStatement();
 
             if (execQuery){
                 rs = query.executeQuery(sql);

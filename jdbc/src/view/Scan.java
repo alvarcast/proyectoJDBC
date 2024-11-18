@@ -5,21 +5,44 @@ import java.util.Scanner;
 
 public class Scan{
 
-    public static int scanNum(String txt){
+    public static int scanInt(String txt){
+        boolean out = false;
         int data = 0;
         Scanner scn = new Scanner(System.in);
 
-        while (data == 0){
+        do {
             System.out.println(txt);
 
             try {
                 data = scn.nextInt();
+                out = true;
             } catch (InputMismatchException ex){
-                System.err.println("Se ha introducido un valor inválido, intentelo de nuevo.");
+                System.err.println("Wrong input, try again");
             }
 
             scn.nextLine();
-        }
+        } while (!out);
+
+        return data;
+    }
+
+    public static float scanFloat(String txt){
+        boolean out = false;
+        float data = 0;
+        Scanner scn = new Scanner(System.in);
+
+        do {
+            System.out.println(txt);
+
+            try {
+                data = scn.nextFloat();
+                out = true;
+            } catch (InputMismatchException ex){
+                System.err.println("Wrong input, try again\"");
+            }
+
+            scn.nextLine();
+        } while (!out);
 
         return data;
     }

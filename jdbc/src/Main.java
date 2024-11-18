@@ -1,7 +1,7 @@
-import controller.ErrorHandler;
+import controller.SuperCtrl;
 
 public class Main {
     public static void main(String[] args) {
-        ErrorHandler.handle();
+        SuperCtrl.runProgram();
     }
 }

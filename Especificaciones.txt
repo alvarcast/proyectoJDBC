@@ -12,17 +12,8 @@ EXTRA
 2. Export SQL
 3. Blacklist de usuarios malardos
 
-LA BD TIENE QUE TENER RELACIONES M:N / 1:N Y 1:M
-4 ENTIDADES MÍNIMO (INCLUIDA LA TABLA DE LA RELACIÓN N:M)
+Mega clase con todas las tablas
 
-MENÚ
-1. Add level
-2. Add beaten level
-3. Edit entry
-4. Delete entry
-5. Search level (By date, google type)
-6. Show all levels
-7. Find broken entries
-8. Export DB SQL
+T = 9.5h
 
-T = 4.5h
+Perchance rellenar las listas al inicio del programa (puede tardar mucho)

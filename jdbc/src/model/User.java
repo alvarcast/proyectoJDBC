@@ -12,12 +12,12 @@ public class User {
         this.password = password;
     }
 
-    public String getPassword() {
-        return password;
+    public int getUid() {
+        return uid;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setUid(int uid) {
+        this.uid = uid;
     }
 
     public String getUsername() {
@@ -28,11 +28,11 @@ public class User {
         this.username = username;
     }
 
-    public int getUid() {
-        return uid;
+    public String getPassword() {
+        return password;
     }
 
-    public void setUid(int uid) {
-        this.uid = uid;
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

@@ -12,5 +12,7 @@ public class ErrorHandler {
         } catch (SQLException e){
             e.printStackTrace();
         }
+
+        //Fichero log
     }
 }
