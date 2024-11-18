@@ -114,8 +114,6 @@ public class MenuCtrl {
         int beaten = 0;
         String start_date;
 
-        int option;
-
         game_id = Scan.scanText("Introduce the game ID:");
         level_name = Scan.scanText("Level name:");
         creator = Scan.scanText("Creator:");
@@ -141,27 +139,9 @@ public class MenuCtrl {
         diff_num = Scan.scanFloat("Introduce the numerical difficulty (GDDL):");
         attempts = Scan.scanInt("Introduce the current number of attempts:");
 
-        do{
-            option = Scan.scanInt("""
-                    
-                    Do you wish to set a custom start date (default is today)?
-                    1. Yes
-                    2. No
-                    """
-            );
+        start_date = askDate();
 
-            if (option < 1 || option > 2){
-                System.err.println("Invalid option, please try again");
-            }
-        } while (option < 1 || option > 2);
-
-        if (option == 1){
-            start_date = Scan.scanText("Introduce date (XX-XX-XXXX):");
-        } else {
-            start_date = LocalDate.now().toString();
-        }
-
-        //Level level = new Level(u.getUid(), game_id, level_name, creator, music, difficulty, diff_num, attempts, beaten, start_date);
+        //Level l = new Level(u.getUid(), game_id, level_name, creator, music, difficulty, diff_num, attempts, beaten, start_date);
         //levelList.add(level);
 
         query = "INSERT INTO level (uid, game_id, level_name, creator, music, difficulty, diff_num, attempts, beaten, start_date) " +
@@ -187,85 +167,32 @@ public class MenuCtrl {
 
     public static void beat(User u) throws SQLException{
         //BeatenLevelList beatenLevelList = new BeatenLevelList();
-        ResultSet rs;
-        int lid = 0;
+        int lid;
         String query;
 
-        String level_name;
-        float music_rate;
-        float gameplay_rate;
-        float deco_rate;
-        float fx_rate;
+        float music_rate = 0;
+        float gameplay_rate = 0;
+        float deco_rate = 0;
+        float fx_rate = 0;
         float enjoyment;
         int total_attempts;
         String end_date;
 
-        int option;
-        boolean out = false;
+        lid = DbManager.getLevelId(u);
 
-        do{
-            level_name = Scan.scanText("Level name:");
+        music_rate = InputValidation.checkNumRange(0, 10, music_rate, "Music rating (0-10):");
 
-            rs = DbManager.runSQL("SELECT id FROM level WHERE level_name = '" + level_name + "' AND uid = '" + u.getUid() + "';", false, true);
-            if (rs.next()){
-                lid = ((Number) rs.getObject(1)).intValue();
-                out = true;
-            } else {
-                System.err.println("That level entry doesn't exist for this user, please try again");
-            }
-        }while (!out);
+        gameplay_rate = InputValidation.checkNumRange(0, 10, gameplay_rate, "Gameplay rating (0-10):");
 
-        do{
-            music_rate = Scan.scanFloat("Music rating (0-10):");
-            if (music_rate < 0 || music_rate > 10){
-                System.err.println("Invalid number, try again");
-            }
-        }while (music_rate < 0 || music_rate > 10);
+        deco_rate = InputValidation.checkNumRange(0, 10, deco_rate, "Decoration rating (0-10):");
 
-        do{
-            gameplay_rate = Scan.scanFloat("Gameplay rating (0-10):");
-            if (gameplay_rate < 0 || gameplay_rate > 10){
-                System.err.println("Invalid number, try again");
-            }
-        }while (gameplay_rate < 0 || gameplay_rate > 10);
-
-        do{
-            deco_rate = Scan.scanFloat("Decoration rating (0-10):");
-            if (deco_rate < 0 || deco_rate > 10){
-                System.err.println("Invalid number, try again");
-            }
-        }while (deco_rate < 0 || deco_rate > 10);
-
-        do{
-            fx_rate = Scan.scanFloat("Effects rating (0-10):");
-            if (fx_rate < 0 || fx_rate > 10){
-                System.err.println("Invalid number, try again");
-            }
-        }while (fx_rate < 0 || fx_rate > 10);
+        fx_rate = InputValidation.checkNumRange(0, 10, fx_rate, "Effects rating (0-10):");
 
         enjoyment = (music_rate + gameplay_rate + deco_rate + fx_rate) / 4;
 
         total_attempts = Scan.scanInt("Total attempts:");
 
-        do{
-            option = Scan.scanInt("""
-                    
-                    Do you wish to set a custom end date (default is today)?
-                    1. Yes
-                    2. No
-                    """
-            );
-
-            if (option < 1 || option > 2){
-                System.err.println("Invalid option, please try again");
-            }
-        } while (option < 1 || option > 2);
-
-        if (option == 1){
-            end_date = Scan.scanText("Introduce date (XX-XX-XXXX):");
-        } else {
-            end_date = LocalDate.now().toString();
-        }
+        end_date = askDate();
 
         //BeatenLevel beatenLevel = new BeatenLevel(lid, music_rate, gameplay_rate, deco_rate, fx_rate, enjoyment, total_attempts, end_date);
         //beatenLevelList.add(beatenLevel);
@@ -284,8 +211,48 @@ public class MenuCtrl {
 
         DbManager.runSQL(query, false, false);
 
-        System.out.println("The level " + level_name + " was added to the completion list correctly");
+        System.out.println("The level was added to the completion list correctly");
 
         //return beatenLevelList;
+    }
+
+    public static void addFav(User u) throws SQLException{
+        int lid;
+        String query;
+
+        lid = DbManager.getLevelId(u);
+
+        //Check this query
+        query = "INSERT INTO favourite_demons (uid, lid) VALUES ('" + u.getUid() + "','" + lid + "');";
+        DbManager.runSQL(query, false, false);
+
+        System.out.println("The level was added correctly to your favourites");
+    }
+
+    private static String askDate(){
+        int option;
+        String date;
+
+        do{
+            option = Scan.scanInt("""
+                    
+                    Do you wish to set a custom end date (default is today)?
+                    1. Yes
+                    2. No
+                    """
+            );
+
+            if (option < 1 || option > 2){
+                System.err.println("Invalid option, please try again");
+            }
+        } while (option < 1 || option > 2);
+
+        if (option == 1){
+            date = Scan.scanText("Introduce date (XX-XX-XXXX):");
+        } else {
+            date = LocalDate.now().toString();
+        }
+
+        return date;
     }
 }

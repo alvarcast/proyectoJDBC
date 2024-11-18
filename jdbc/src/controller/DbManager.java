@@ -2,35 +2,44 @@ package controller;
 
 import model.Connex;
 import model.SingletonDB;
+import model.User;
+import view.Scan;
 
 import java.sql.*;
 import java.util.ArrayList;
 
 public class DbManager {
 
-    public static void select(){
+    public static ResultSet runSQL(String sql, boolean view, boolean noUpdate) {
 
+        SingletonDB db_instance = SingletonDB.getInstance();
+        Connex connex_instance;
 
-    }
+        Connection connection;
+        ResultSet rs = null;
+        Statement query;
 
-    public static void create(String tablename, ArrayList<String> data){
-        String consult = "CREATE TABLE " + tablename;
-    }
+        try {
+            //Conectar con la base de datos
+            Class.forName("com.mysql.jdbc.Driver");
+            connex_instance = Connex.getInstance(db_instance.getUsername(), db_instance.getPassword(), db_instance.getDatabase(), db_instance.getServername());
 
-    public static void insert(String tablename){
+            query = connex_instance.getConnection().createStatement();
 
-    }
+            if (noUpdate){
+                rs = query.executeQuery(sql);
+            } else {
+                query.executeUpdate(sql);
+            }
 
-    public static void update(String tablename, String clause, String condition){
+            if (view){
+                //Imprimir select
+            }
 
-    }
-
-    public static void delete(String tablename, String clause, String condition){
-        String consult = "DELETE " + clause + " FROM " + tablename + " WHERE " + condition;
-    }
-
-    public static void truncate(){
-
+        } catch (SQLException | ClassNotFoundException ex) {
+            ex.printStackTrace();
+        }
+        return rs;
     }
 
     public static boolean checkDupe(String table, String tableReturn, String column, String param){
@@ -51,45 +60,24 @@ public class DbManager {
         return dupe;
     }
 
-    public static ResultSet runSQL(String sql, boolean view, boolean execQuery) {
+    public static int getLevelId(User u) throws SQLException{
+        ResultSet rs;
+        int lid = 0;
+        String level_name;
+        boolean out = false;
 
-        SingletonDB db_instance = SingletonDB.getInstance();
-        Connex connex_instance;
+        do{
+            level_name = Scan.scanText("Level name:");
 
-        Connection connection;
-        ResultSet rs = null;
-        Statement query;
-
-        try {
-            //Conectar con la base de datos
-            Class.forName("com.mysql.jdbc.Driver");
-            connex_instance = Connex.getInstance(db_instance.getUsername(), db_instance.getPassword(), db_instance.getDatabase(), db_instance.getServername());
-
-            query = connex_instance.getConnection().createStatement();
-
-            if (execQuery){
-                rs = query.executeQuery(sql);
+            rs = DbManager.runSQL("SELECT id FROM level WHERE level_name = '" + level_name + "' AND uid = '" + u.getUid() + "';", false, true);
+            if (rs.next()){
+                lid = ((Number) rs.getObject(1)).intValue();
+                out = true;
             } else {
-                query.executeUpdate(sql);
+                System.err.println("That level entry doesn't exist for this user, please try again");
             }
+        }while (!out);
 
-            if (view){
-                //Imprimir select
-            }
-
-        } catch (SQLException | ClassNotFoundException ex) {
-            ex.printStackTrace();
-        }
-        return rs;
-    }
-
-    public static void disconnect(Connection connection){
-        try{
-            if (connection != null){
-                connection.close();
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
+        return lid;
     }
 }

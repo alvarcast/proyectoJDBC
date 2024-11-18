@@ -63,7 +63,7 @@ public class Menu {
             switch (option) {
                 case 1 -> MenuCtrl.addLevel(u);
                 case 2 -> MenuCtrl.beat(u);
-                //case 3 -> ;
+                case 3 -> MenuCtrl.addFav(u);
                 //case 4 -> ;
                 //case 5 -> ;
                 //case 6 -> ;

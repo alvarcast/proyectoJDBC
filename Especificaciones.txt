@@ -14,6 +14,6 @@ EXTRA
 
 Mega clase con todas las tablas
 
-T = 9.5h
+T = 10.5h
 
 Perchance rellenar las listas al inicio del programa (puede tardar mucho)
