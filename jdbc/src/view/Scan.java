@@ -6,16 +6,20 @@ import java.util.Scanner;
 public class Scan{
 
     public static int scanInt(String txt){
+        Scanner scn = new Scanner(System.in);
         boolean out = false;
         int data = 0;
-        Scanner scn = new Scanner(System.in);
 
         do {
             System.out.println(txt);
 
             try {
                 data = scn.nextInt();
-                out = true;
+                if (data < 0){
+                    System.err.println("Negative values aren't allowed, please try again");
+                } else {
+                    out = true;
+                }
             } catch (InputMismatchException ex){
                 System.err.println("Wrong input, try again");
             }
@@ -27,18 +31,22 @@ public class Scan{
     }
 
     public static float scanFloat(String txt){
+        Scanner scn = new Scanner(System.in);
         boolean out = false;
         float data = 0;
-        Scanner scn = new Scanner(System.in);
 
         do {
             System.out.println(txt);
 
             try {
                 data = scn.nextFloat();
-                out = true;
+                if (data < 0){
+                    System.err.println("Negative values aren't allowed, please try again");
+                } else {
+                    out = true;
+                }
             } catch (InputMismatchException ex){
-                System.err.println("Wrong input, try again\"");
+                System.err.println("Wrong input, try again. Remember to use ',' not '.'");
             }
 
             scn.nextLine();
@@ -48,8 +56,8 @@ public class Scan{
     }
 
     public static String scanText(String txt){
-        String data = "";
         Scanner scn = new Scanner(System.in);
+        String data = "";
 
         while (data.isEmpty()){
             System.out.println(txt);
@@ -60,9 +68,10 @@ public class Scan{
     }
 
     public static void waitForInput(){
+        Scanner scn = new Scanner(System.in);
+
         System.out.println(" ");
         System.out.println(">>> Press enter to continue <<<");
-        Scanner scn = new Scanner(System.in);
         scn.nextLine();
     }
 }

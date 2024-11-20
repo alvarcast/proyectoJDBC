@@ -1,4 +1,4 @@
-Práctica jdbc
+Práctica JDBC
 
 OBLIGATORIO
 1. CRUD
@@ -8,12 +8,15 @@ OBLIGATORIO
 5. Buscador tipo google (palabra coje todas los caracteres)
 
 EXTRA
-1. Propuesta
-2. Export SQL
-3. Blacklist de usuarios malardos
+1. Export SQL
+2. Blacklist de usuarios malardos
 
-Mega clase con todas las tablas
+T = 19.5h~
 
-T = 10.5h
+//TODO
 
-Perchance rellenar las listas al inicio del programa (puede tardar mucho)
+- CR(UD) DE NIVELES, BEATEN LEVELS, FAV LEVELS, USER Y PERSONAL INFO.
+- BUSCADOR DE NIVEL Y REGISTROS NULOS (PUNTOS 3, 4 Y 5)
+- EXPORTAR BASE DE DATOS A SQL (PUNTO 1 EXTRA)
+- BLACKLIST (FICHERO) DE NOMBRES DE USUARIO BANEADOS (PUNTO 2 EXTRA)
+- COMENTAR Y OPTIMIZAR CÓDIGO

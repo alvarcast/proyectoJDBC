@@ -1,11 +1,13 @@
 package controller;
 
 import model.*;
+import view.Printer;
 import view.Scan;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 
 public class MenuCtrl {
 
@@ -20,11 +22,11 @@ public class MenuCtrl {
         do{
             username = Scan.scanText("Username:");
 
-            rs = DbManager.runSQL("SELECT id FROM user WHERE username = '" + username + "';", false, true);
-            if (!rs.next()){
-                System.err.println("That username does not exist, try again");
-            } else {
+            rs = DbManager.runSQL("SELECT uid FROM user WHERE username = '" + username + "';", true);
+            if (rs.next()){
                 out = true;
+            } else {
+                System.err.println("That user does not exist, try again");
             }
         } while (!out);
 
@@ -34,7 +36,7 @@ public class MenuCtrl {
             password = Scan.scanText("Password:");
             password = Encrypt.crypt(password);
 
-            rs = DbManager.runSQL("SELECT password FROM user WHERE username = '" + username + "';", false, true);
+            rs = DbManager.runSQL("SELECT password FROM user WHERE username = '" + username + "';", true);
             rs.next();
             checkPassword = (String) rs.getObject(1);
             if (!password.equals(checkPassword)){
@@ -44,7 +46,7 @@ public class MenuCtrl {
             }
         } while (!out);
 
-        rs = DbManager.runSQL("SELECT id FROM user WHERE username = '" + username + "';", false, true);
+        rs = DbManager.runSQL("SELECT uid FROM user WHERE username = '" + username + "';", true);
         rs.next();
         uid = ((Number) rs.getObject(1)).intValue();
 
@@ -73,7 +75,7 @@ public class MenuCtrl {
 
         do{
             username = Scan.scanText("Username:");
-        } while (DbManager.checkDupe("user", "id", "username", username));
+        } while (DbManager.checkDupe("user", "uid", "username", username));
 
         do{
             password = Scan.scanText("Password:");
@@ -86,36 +88,37 @@ public class MenuCtrl {
         password = Encrypt.crypt(password);
 
         query = "INSERT INTO user (username, password) VALUES ('" + username + "','" + password + "');";
-        DbManager.runSQL(query, false, false);
+        DbManager.runSQL(query, false);
 
-        rs = DbManager.runSQL("SELECT id FROM user WHERE username = '" + username + "';", false, true);
+        rs = DbManager.runSQL("SELECT uid FROM user WHERE username = '" + username + "';", true);
         rs.next();
         uid = ((Number) rs.getObject(1)).intValue();
 
         query = "INSERT INTO personal_info (uid, name, surname, email) VALUES ('" + uid + "','" + name + "','" + surname + "','" + email + "');";
-        DbManager.runSQL(query, false, false);
+        DbManager.runSQL(query, false);
 
         System.out.println("New user '" + username + "' was created");
 
         return new User(uid, username, password);
     }
 
-    public static void addLevel(User u){
-        //LevelList levelList = new LevelList();
+    public static void addLevel(User u) throws SQLException{
         String query;
 
-        String game_id;
+        int game_id;
         String level_name;
         String creator;
         String music;
         int difficulty;
-        float diff_num;
+        float diff_num = 0;
         int attempts;
         int beaten = 0;
         String start_date;
 
-        game_id = Scan.scanText("Introduce the game ID:");
-        level_name = Scan.scanText("Level name:");
+        game_id = DbManager.checkGameId(u);
+
+        level_name = DbManager.checkLevelName(u);
+
         creator = Scan.scanText("Creator:");
         music = Scan.scanText("Song:");
 
@@ -136,13 +139,10 @@ public class MenuCtrl {
             }
         } while (difficulty < 1 || difficulty > 5);
 
-        diff_num = Scan.scanFloat("Introduce the numerical difficulty (GDDL):");
+        diff_num = InputValidation.checkNumRange(1, 35, diff_num, "Introduce the numerical difficulty (GDDL):");
         attempts = Scan.scanInt("Introduce the current number of attempts:");
 
         start_date = askDate();
-
-        //Level l = new Level(u.getUid(), game_id, level_name, creator, music, difficulty, diff_num, attempts, beaten, start_date);
-        //levelList.add(level);
 
         query = "INSERT INTO level (uid, game_id, level_name, creator, music, difficulty, diff_num, attempts, beaten, start_date) " +
                 "VALUES ('" + u.getUid() + "','" +
@@ -158,17 +158,14 @@ public class MenuCtrl {
                 "');"
         ;
 
-        DbManager.runSQL(query, false, false);
+        DbManager.runSQL(query, false);
 
-        System.out.println("The level " + level_name + " was added correctly");
-
-        //return levelList;
+        System.out.println("The level " + level_name + " was added correctly to your level list");
     }
 
     public static void beat(User u) throws SQLException{
-        //BeatenLevelList beatenLevelList = new BeatenLevelList();
-        int lid;
         String query;
+        int lid;
 
         float music_rate = 0;
         float gameplay_rate = 0;
@@ -178,7 +175,7 @@ public class MenuCtrl {
         int total_attempts;
         String end_date;
 
-        lid = DbManager.getLevelId(u);
+        lid = DbManager.checkIfBeaten(u);
 
         music_rate = InputValidation.checkNumRange(0, 10, music_rate, "Music rating (0-10):");
 
@@ -194,9 +191,6 @@ public class MenuCtrl {
 
         end_date = askDate();
 
-        //BeatenLevel beatenLevel = new BeatenLevel(lid, music_rate, gameplay_rate, deco_rate, fx_rate, enjoyment, total_attempts, end_date);
-        //beatenLevelList.add(beatenLevel);
-
         query = "INSERT INTO beaten_level (lid, music_rate, gameplay_rate, deco_rate, fx_rate, enjoyment, total_attempts, end_date) " +
                 "VALUES ('" + lid + "','" +
                 music_rate + "','" +
@@ -209,29 +203,30 @@ public class MenuCtrl {
                 "');"
         ;
 
-        DbManager.runSQL(query, false, false);
+        DbManager.runSQL(query, false);
+
+        query = "UPDATE level SET beaten = 1 WHERE lid = '" + lid + "';";
+
+        DbManager.runSQL(query, false);
 
         System.out.println("The level was added to the completion list correctly");
-
-        //return beatenLevelList;
     }
 
     public static void addFav(User u) throws SQLException{
         int lid;
         String query;
 
-        lid = DbManager.getLevelId(u);
+        lid = DbManager.checkFavourite(u);
 
-        //Check this query
-        query = "INSERT INTO favourite_demons (uid, lid) VALUES ('" + u.getUid() + "','" + lid + "');";
-        DbManager.runSQL(query, false, false);
+        query = "INSERT INTO fav_demons (uid, lid) VALUES ('" + u.getUid() + "','" + lid + "');";
+        DbManager.runSQL(query, false);
 
         System.out.println("The level was added correctly to your favourites");
     }
 
     private static String askDate(){
         int option;
-        String date;
+        String date = "";
 
         do{
             option = Scan.scanInt("""
@@ -248,11 +243,268 @@ public class MenuCtrl {
         } while (option < 1 || option > 2);
 
         if (option == 1){
-            date = Scan.scanText("Introduce date (XX-XX-XXXX):");
+            date = InputValidation.checkDate(date);
         } else {
             date = LocalDate.now().toString();
         }
 
         return date;
+    }
+
+    public static void viewLevels(User u, boolean justLevels) throws SQLException{
+        LevelList levelList = new LevelList();
+        BeatenLevelList beatenLevelList = new BeatenLevelList();
+        ResultSet rs;
+        ResultSet beaten_rs;
+        String query;
+
+        int lid;
+        int game_id;
+        String level_name;
+        String creator;
+        String music;
+        String difficulty;
+        float diff_num;
+        int attempts;
+        int beaten;
+        String start_date;
+
+        float music_rate;
+        float gameplay_rate;
+        float deco_rate;
+        float fx_rate;
+        float enjoyment;
+        int total_attempts;
+        String end_date;
+
+        query = "SELECT game_id, level_name, creator, music, difficulty_name, diff_num, attempts, beaten, start_date " +
+                "FROM level l " +
+                "INNER JOIN demon_difficulties d ON l.difficulty = d.did " +
+                "WHERE uid = '" + u.getUid() + "';"
+        ;
+        rs = DbManager.runSQL(query, true);
+
+        while (rs.next()){
+            game_id = rs.getInt("game_id");
+            level_name = rs.getString("level_name");
+            creator = rs.getString("creator");
+            music = rs.getString("music");
+            difficulty = rs.getString("difficulty_name");
+            diff_num = rs.getFloat("diff_num");
+            attempts = rs.getInt("attempts");
+            beaten = rs.getInt("beaten");
+            start_date = rs.getString("start_date");
+
+            lid = DbManager.getLevelId(u, level_name);
+
+            levelList.add(new Level(lid, game_id, level_name, creator, music, difficulty, diff_num, attempts, beaten, start_date));
+
+            if (beaten == 1){
+                lid = DbManager.getLevelId(u, level_name);
+
+                query = "SELECT music_rate, gameplay_rate, deco_rate, fx_rate, enjoyment, total_attempts, end_date " +
+                        "FROM beaten_level WHERE lid = '" + lid + "';"
+                ;
+                beaten_rs = DbManager.runSQL(query, true);
+
+                beaten_rs.next();
+                music_rate = beaten_rs.getFloat("music_rate");
+                gameplay_rate = beaten_rs.getFloat("gameplay_rate");
+                deco_rate = beaten_rs.getFloat("deco_rate");
+                fx_rate = beaten_rs.getFloat("fx_rate");
+                enjoyment = beaten_rs.getFloat("enjoyment");
+                total_attempts = beaten_rs.getInt("total_attempts");
+                end_date = beaten_rs.getString("end_date");
+
+                beatenLevelList.add(new BeatenLevel(lid, music_rate, gameplay_rate, deco_rate, fx_rate, enjoyment, total_attempts, end_date));
+            }
+        }
+
+        Printer.printLevels(levelList, beatenLevelList);
+    }
+
+    public static void viewFavourites(User u) throws SQLException{
+        LevelList levelList = new LevelList();
+        ArrayList<Integer> lidsList = new ArrayList<Integer>();
+        ResultSet rs;
+        String query;
+
+        int game_id;
+        String level_name;
+        String creator;
+        String music;
+        String difficulty;
+
+        query = "SELECT lid FROM fav_demons WHERE uid = '" + u.getUid() + "';";
+        rs = DbManager.runSQL(query, true);
+
+        while (rs.next()) {
+            lidsList.add(rs.getInt("lid"));
+        }
+
+        for (Integer integer : lidsList) {
+            query = "SELECT game_id, level_name, creator, music, difficulty_name " +
+                    "FROM level l " +
+                    "INNER JOIN demon_difficulties d ON l.difficulty = d.did " +
+                    "WHERE uid = '" + u.getUid() + "' AND lid = '" + integer + "';"
+            ;
+            rs = DbManager.runSQL(query, true);
+            rs.next();
+
+            game_id = rs.getInt("game_id");
+            level_name = rs.getString("level_name");
+            creator = rs.getString("creator");
+            music = rs.getString("music");
+            difficulty = rs.getString("difficulty_name");
+
+            levelList.add(new Level(game_id, level_name, creator, music, difficulty));
+        }
+
+        Printer.printFavourites(levelList);
+    }
+
+    public static void viewDataBase() throws SQLException{
+        UserList ul = new UserList();
+        PersonalInfoList pil = new PersonalInfoList();
+        LevelList ll = new LevelList();
+        FavouriteLevelList fll = new FavouriteLevelList();
+        DifficultyList dl = new DifficultyList();
+        BeatenLevelList bll = new BeatenLevelList();
+
+        ResultSet lrs;
+        ResultSet rs;
+        String query;
+
+        //User
+        int uid;
+        String username;
+        String password;
+
+        //Personal info
+        String name;
+        String surname;
+        String email;
+
+        //Levels
+        int lid;
+        int game_id;
+        String level_name;
+        String creator;
+        String music;
+        String difficulty;
+        float diff_num;
+        int attempts;
+        int beaten;
+        String start_date;
+
+        //Beaten levels
+        float music_rate;
+        float gameplay_rate;
+        float deco_rate;
+        float fx_rate;
+        float enjoyment;
+        int total_attempts;
+        String end_date;
+
+        //Favourite levels (uid and lid)
+
+        //Difficulties
+        int did;
+        String difficulty_name;
+
+        query = "SELECT * FROM user";
+        rs = DbManager.runSQL(query, true);
+
+        while (rs.next()){
+            uid = rs.getInt("uid");
+            username = rs.getString("username");
+            password = rs.getString("password");
+
+            ul.add(new User(uid, username, password));
+        }
+
+        query = "SELECT username, name, surname, email " +
+                "FROM personal_info p " +
+                "INNER JOIN user u ON p.uid = u.uid;"
+        ;
+        rs = DbManager.runSQL(query, true);
+
+        while (rs.next()){
+            username = rs.getString("username");
+            name = rs.getString("name");
+            surname = rs.getString("surname");
+            email = rs.getString("email");
+
+            pil.add(new PersonalInfo(username, name, surname, email));
+        }
+
+        query = "SELECT lid, username, game_id, level_name, creator, music, difficulty_name, diff_num, attempts, beaten, start_date " +
+                "FROM level l " +
+                "INNER JOIN user u ON l.uid = u.uid " +
+                "INNER JOIN demon_difficulties d ON l.difficulty = d.did;"
+        ;
+        lrs = DbManager.runSQL(query, true);
+
+        while (lrs.next()){
+            lid = lrs.getInt("lid");
+            username = lrs.getString("username");
+            game_id = lrs.getInt("game_id");
+            level_name = lrs.getString("level_name");
+            creator = lrs.getString("creator");
+            music = lrs.getString("music");
+            difficulty = lrs.getString("difficulty_name");
+            diff_num = lrs.getFloat("diff_num");
+            attempts = lrs.getInt("attempts");
+            beaten = lrs.getInt("beaten");
+            start_date = lrs.getString("start_date");
+
+            ll.add(new Level(lid, username, game_id, level_name, creator, music, difficulty, diff_num, attempts, beaten, start_date));
+
+            if (beaten == 1){
+                query = "SELECT * " +
+                        "FROM beaten_Level WHERE lid = '" + lid + "';"
+                ;
+                rs = DbManager.runSQL(query, true);
+
+                while (rs.next()){
+                    lid = rs.getInt("lid");
+                    music_rate = rs.getFloat("music_rate");
+                    gameplay_rate = rs.getFloat("gameplay_rate");
+                    deco_rate = rs.getFloat("deco_rate");
+                    fx_rate = rs.getFloat("fx_rate");
+                    enjoyment = rs.getFloat("enjoyment");
+                    total_attempts = rs.getInt("total_attempts");
+                    end_date = rs.getString("end_date");
+
+                    bll.add(new BeatenLevel(lid, music_rate, gameplay_rate, deco_rate, fx_rate, enjoyment, total_attempts, end_date));
+                }
+            }
+        }
+
+        query = "SELECT username, level_name " +
+                "FROM fav_demons f " +
+                "INNER JOIN user u ON f.uid = u.uid " +
+                "INNER JOIN level l ON f.lid = l.lid;"
+        ;
+        rs = DbManager.runSQL(query, true);
+
+        while (rs.next()){
+            username = rs.getString("username");
+            level_name = rs.getString("level_name");
+
+            fll.add(new FavouriteLevel(username, level_name));
+        }
+
+        query = "SELECT * FROM demon_difficulties;";
+        rs = DbManager.runSQL(query, true);
+
+        while (rs.next()){
+            did = rs.getInt("did");
+            difficulty_name = rs.getString("difficulty_name");
+
+            dl.add(new Difficulty(did, difficulty_name));
+        }
+
+        Printer.printAll(new MegaClass(ul, pil, ll, bll, fll, dl));
     }
 }

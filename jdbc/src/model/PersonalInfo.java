@@ -2,26 +2,24 @@ package model;
 
 public class PersonalInfo {
 
-    private int uid;
+    private String username;
     private String name;
     private String surname;
     private  String email;
-    private String rec_email;
 
-    public PersonalInfo(int uid, String name, String surname, String email, String rec_email) {
-        this.uid = uid;
+    public PersonalInfo(String username, String name, String surname, String email) {
+        this.username = username;
         this.name = name;
         this.surname = surname;
         this.email = email;
-        this.rec_email = rec_email;
     }
 
-    public int getUid() {
-        return uid;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUid(int uid) {
-        this.uid = uid;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getName() {
@@ -46,13 +44,5 @@ public class PersonalInfo {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getRec_email() {
-        return rec_email;
-    }
-
-    public void setRec_email(String rec_email) {
-        this.rec_email = rec_email;
     }
 }

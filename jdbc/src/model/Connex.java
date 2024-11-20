@@ -40,7 +40,7 @@ public class Connex {
                     Connex.getInstance().getConnection().close();
                 }
             }
-            System.out.println("Conexión cerrada correctamente");
+            System.out.println("Connection closed succesfully.");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

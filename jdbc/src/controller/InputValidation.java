@@ -25,4 +25,18 @@ public class InputValidation {
 
         return var;
     }
+
+    public static String checkDate(String date){
+        String pattern = "\\d{4}-\\d{2}-\\d{2}";
+
+        do {
+            date = Scan.scanText("Introduce date (YYYY-MM-DD):");
+
+            if (!date.matches(pattern)){
+                System.err.println("Invalid date format, please try again");
+            }
+        } while (!date.matches(pattern));
+
+        return date;
+    }
 }
