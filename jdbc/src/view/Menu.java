@@ -1,5 +1,6 @@
 package view;
 
+import controller.DbManager;
 import controller.InputValidation;
 import controller.MenuCtrl;
 import model.User;
@@ -38,7 +39,9 @@ public class Menu {
         System.out.println("Welcome, " + u.getUsername() + "!");
 
         do{
-            option = InputValidation.checkNumRange(1, 10, option, """
+
+            if (u.getUid() != 0){
+                option = InputValidation.checkNumRange(1, 10, option, """
                 
                 === Main Menu ===
                 1. Add level
@@ -46,13 +49,16 @@ public class Menu {
                 3. Add a level to favourites
                 4. Show data
                 5. Manage levels
-                6. Search level (By date, google type)
-                7. Find broken entries
+                6. Search level
+                7. Find broken (null) entries
                 8. Account settings
                 9. Export DB to SQL
                 10. Exit
                 """
-            );
+                );
+            } else {
+                option = 10;
+            }
 
             if (option != 10){
                 switch (option) {
@@ -60,11 +66,11 @@ public class Menu {
                     case 2 -> MenuCtrl.beat(u);
                     case 3 -> MenuCtrl.addFav(u);
                     case 4 -> Menu.dataMenu(u);
-                    //case 5 -> ;
-                    //case 6 -> ;
-                    //case 7 -> ;
-                    //case 8 -> ;
-                    //case 9 -> ;
+                    case 5 -> Menu.manageLevelsMenu(u);
+                    case 6 -> Menu.searchMenu(u);
+                    case 7 -> MenuCtrl.findNull();
+                    case 8 -> Menu.manageUserMenu(u);
+                    case 9 -> DbManager.exportDB();
                 }
             } else {
                 System.out.println("Exiting program...");
@@ -86,9 +92,135 @@ public class Menu {
         );
 
         switch (option) {
-            case 1 -> MenuCtrl.viewLevels(u, true);
+            case 1 -> MenuCtrl.viewLevels(u);
             case 2 -> MenuCtrl.viewFavourites(u);
             case 3 -> MenuCtrl.viewDataBase();
-        };
+        }
+    }
+
+    public static void manageLevelsMenu(User u) throws SQLException{
+        int option = 0;
+
+        option = InputValidation.checkNumRange(1, 4, option, """
+                
+                Select an option:
+                1. Manage levels
+                2. Manage beaten levels
+                3. Manage favourite levels
+                4. Back
+                """
+        );
+
+        switch (option) {
+            case 1 -> Menu.manageLevel(u);
+            case 2 -> Menu.manageBeaten(u);
+            case 3 -> Menu.manageFavourites(u);
+        }
+    }
+
+    public static void manageLevel(User u) throws SQLException{
+        int option = 0;
+
+        option = InputValidation.checkNumRange(1, 3, option, """
+                
+                Select an option:
+                1. Update a level
+                2. Delete a level
+                3. Back
+                """
+        );
+
+        switch (option) {
+            case 1 -> MenuCtrl.manageLevelUpdate(u);
+            case 2 -> MenuCtrl.deleteLevel(u);
+        }
+    }
+
+    public static void manageBeaten(User u) throws SQLException{
+        int option = 0;
+
+        option = InputValidation.checkNumRange(1, 3, option, """
+                
+                Select an option:
+                1. Update a beaten level
+                2. Un-beat a level
+                3. Back
+                """
+        );
+
+        switch (option) {
+            case 1 -> MenuCtrl.manageBeatenLevelUpdate(u);
+            case 2 -> MenuCtrl.unBeat(u);
+        }
+    }
+
+    public static void manageFavourites(User u) throws SQLException{
+        int option = 0;
+
+        option = InputValidation.checkNumRange(1, 2, option, """
+                
+                Select an option:
+                1. Un-favourite a level
+                2. Back
+                """
+        );
+
+        if (option == 1) {
+            MenuCtrl.unFavourite(u);
+        }
+    }
+
+    public static void manageUserMenu(User u) throws SQLException{
+        int option = 0;
+
+        option = InputValidation.checkNumRange(1, 3, option, """
+                
+                Select an option:
+                1. Manage user information
+                2. Manage personal information
+                3. Back
+                """
+        );
+
+        switch (option) {
+            case 1 -> Menu.manageUser(u);
+            case 2 -> MenuCtrl.managePersonalInformationUpdate(u);
+        }
+    }
+
+    public static void manageUser(User u) throws SQLException{
+        int option = 0;
+
+        option = InputValidation.checkNumRange(1, 3, option, """
+                
+                Select an option:
+                1. Update user information
+                2. Delete account
+                3. Back
+                """
+        );
+
+        switch (option) {
+            case 1 -> MenuCtrl.manageUserUpdate(u);
+            case 2 -> MenuCtrl.deleteUser(u);
+        }
+    }
+
+    public static void searchMenu(User u) throws SQLException{
+        int option = 0;
+
+        option = InputValidation.checkNumRange(1, 3, option, """
+                
+                Select an option:
+                1. Google type search (All DB)
+                2. Date search
+                3. Back
+                """
+        );
+
+        switch (option) {
+            case 1 -> MenuCtrl.googleSearch();
+            case 2 -> MenuCtrl.dateSearch(u);
+        }
     }
 }

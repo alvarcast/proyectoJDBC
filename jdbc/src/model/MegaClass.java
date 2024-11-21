@@ -65,4 +65,16 @@ public class MegaClass {
     public void setDifficultyList(DifficultyList difficultyList) {
         this.difficultyList = difficultyList;
     }
+
+    public boolean isEmpty(){
+        boolean empty;
+        empty = userList.getUserList().isEmpty() &&
+                personalInfoList.getPersonalInfoList().isEmpty() &&
+                levelList.getLevelList().isEmpty() &&
+                beatenLevelList.getBeatenLevelList().isEmpty() &&
+                favouriteLevelList.getFavouriteLevelList().isEmpty() &&
+                difficultyList.getDifficultieList().isEmpty()
+        ;
+        return empty;
+    }
 }

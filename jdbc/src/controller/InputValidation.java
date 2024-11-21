@@ -26,8 +26,9 @@ public class InputValidation {
         return var;
     }
 
-    public static String checkDate(String date){
-        String pattern = "\\d{4}-\\d{2}-\\d{2}";
+    public static String checkDate(){
+        String pattern = "^(2013|20[1-9][3-9]|202[0-5])-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$";
+        String date;
 
         do {
             date = Scan.scanText("Introduce date (YYYY-MM-DD):");

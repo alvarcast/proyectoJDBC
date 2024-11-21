@@ -18,11 +18,10 @@ public class Connex {
         }
     }
 
-    public static Connex getInstance(String username, String password, String database, String servername) {
+    public static void getInstance(String username, String password, String database, String servername) {
         if (instance == null) {
             instance = new Connex(username, password, database, servername);
         }
-        return instance;
     }
 
     public static Connex getInstance() {

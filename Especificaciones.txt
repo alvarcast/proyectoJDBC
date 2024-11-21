@@ -9,14 +9,13 @@ OBLIGATORIO
 
 EXTRA
 1. Export SQL
-2. Blacklist de usuarios malardos
+2. Blacklist de usuarios malardos (Filtro sqlinjection)
 
-T = 19.5h~
+T = 32h~
 
 //TODO
 
-- CR(UD) DE NIVELES, BEATEN LEVELS, FAV LEVELS, USER Y PERSONAL INFO.
-- BUSCADOR DE NIVEL Y REGISTROS NULOS (PUNTOS 3, 4 Y 5)
-- EXPORTAR BASE DE DATOS A SQL (PUNTO 1 EXTRA)
 - BLACKLIST (FICHERO) DE NOMBRES DE USUARIO BANEADOS (PUNTO 2 EXTRA)
 - COMENTAR Y OPTIMIZAR CÓDIGO
+- REFERENCIAR COSAS (enhanced for, enhanced switch y yield, singleton, patterns de chatgpt)
+- Insert stuff

@@ -10,8 +10,8 @@ public final class SingletonDB {
     private final String servername;
 
     private SingletonDB(){
-        this.username = "user";
-        this.password = "1234";
+        this.username = "administrador";
+        this.password = "contraseñaAdministrador";
         this.database = "gd_demons";
         this.servername = "localhost";
     }

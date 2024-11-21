@@ -4,6 +4,9 @@ import model.Connex;
 import model.User;
 import view.Scan;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.sql.*;
 
 public class DbManager {
@@ -163,5 +166,45 @@ public class DbManager {
         }while (!out);
 
         return lid;
+    }
+
+    public static void exportDB(){
+        //Creditos: ChatGPT, stackOverflow, documentación de mysql y cuatro horas de mi tiempo
+
+        // Define MySQL credentials and export file path
+        String host = "localhost";  // MySQL server host
+        String port = "3306";       // MySQL server port
+        String user = "root";       // MySQL username
+        String database = "gd_demons"; // Database to export
+        String exportPath = "C:/Users/alvar/Documents/proyectoJDBC/gd_demons_dump.sql"; // Destination SQL file path
+
+        // Construct the mysqldump command
+        String command = String.format(
+                "mysqldump --host=%s --port=%s --user=%s %s -r %s",
+                host, port, user, database, exportPath
+        );
+
+        try {
+            // Execute the command
+            Process process = Runtime.getRuntime().exec(command);
+
+            // Capture the output or error stream
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                System.out.println(line);  // Print output for debugging
+            }
+
+            // Wait for the process to complete
+            int exitCode = process.waitFor();
+            if (exitCode == 0) {
+                System.out.println("Database export successful! File saved to " + exportPath);
+            } else {
+                System.err.println("Error occurred during export. Exit code: " + exitCode);
+            }
+
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
