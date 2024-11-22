@@ -1,6 +1,7 @@
 package model;
 
 public class BeatenLevel {
+    //Clase para entradas de la tabla beaten_level
 
     private int lid;
     private float music_rate;

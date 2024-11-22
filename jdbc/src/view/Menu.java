@@ -9,6 +9,7 @@ import java.sql.SQLException;
 
 public class Menu {
 
+    //Menu que sale al principio, para iniciar sesion o crear una cuenta
     public static void startMenu() throws SQLException {
         int option = 0;
 
@@ -33,6 +34,7 @@ public class Menu {
         }
     }
 
+    //Menu de opciones
     public static void menu(User u) throws SQLException{
         int option = 0;
 
@@ -41,7 +43,7 @@ public class Menu {
         do{
 
             if (u.getUid() != 0){
-                option = InputValidation.checkNumRange(1, 10, option, """
+                option = InputValidation.checkNumRange(1, 11, option, """
                 
                 === Main Menu ===
                 1. Add level
@@ -53,14 +55,15 @@ public class Menu {
                 7. Find broken (null) entries
                 8. Account settings
                 9. Export DB to SQL
-                10. Exit
+                10. Ban reasons
+                11. Exit
                 """
                 );
             } else {
-                option = 10;
+                option = 11;
             }
 
-            if (option != 10){
+            if (option != 11){
                 switch (option) {
                     case 1 -> MenuCtrl.addLevel(u);
                     case 2 -> MenuCtrl.beat(u);
@@ -71,13 +74,15 @@ public class Menu {
                     case 7 -> MenuCtrl.findNull();
                     case 8 -> Menu.manageUserMenu(u);
                     case 9 -> DbManager.exportDB();
+                    case 10 -> Menu.banReasons();
                 }
             } else {
                 System.out.println("Exiting program...");
             }
-        } while (option != 10);
+        } while (option != 11);
     }
 
+    //Menu para ver x tipo de niveles
     public static void dataMenu(User u) throws SQLException{
         int option = 0;
 
@@ -98,6 +103,7 @@ public class Menu {
         }
     }
 
+    //Menu de opciones de niveles
     public static void manageLevelsMenu(User u) throws SQLException{
         int option = 0;
 
@@ -118,6 +124,7 @@ public class Menu {
         }
     }
 
+    //Menu de opciones de la tabla level
     public static void manageLevel(User u) throws SQLException{
         int option = 0;
 
@@ -136,6 +143,7 @@ public class Menu {
         }
     }
 
+    //Menu de opciones de la tabla beaten_level
     public static void manageBeaten(User u) throws SQLException{
         int option = 0;
 
@@ -154,6 +162,7 @@ public class Menu {
         }
     }
 
+    //Menu de opciones de la tabla favourites
     public static void manageFavourites(User u) throws SQLException{
         int option = 0;
 
@@ -170,6 +179,7 @@ public class Menu {
         }
     }
 
+    //Menu de opciones de usuario e informacion personal
     public static void manageUserMenu(User u) throws SQLException{
         int option = 0;
 
@@ -188,6 +198,7 @@ public class Menu {
         }
     }
 
+    //Menu de opciones de la tabla user
     public static void manageUser(User u) throws SQLException{
         int option = 0;
 
@@ -206,6 +217,7 @@ public class Menu {
         }
     }
 
+    //Menu para elegir el tipo de busqueda
     public static void searchMenu(User u) throws SQLException{
         int option = 0;
 
@@ -222,5 +234,25 @@ public class Menu {
             case 1 -> MenuCtrl.googleSearch();
             case 2 -> MenuCtrl.dateSearch(u);
         }
+    }
+
+    //Imprime las normas y razones de baneo, y cosas que se deberia evitar poner
+    public static void banReasons(){
+        System.out.println("""
+                
+                === Ban reasons ===
+                1. Trying to do a sqlinject will get you automatically ban, so avoid using the following when asked por an input:
+                - or
+                - and
+                - is
+                - like
+                - join
+                - =
+                - +
+                - '
+                2. Don't worry about levels with those words, inputing that won't get you banned.
+                """)
+        ;
+        Scan.waitForInput();
     }
 }

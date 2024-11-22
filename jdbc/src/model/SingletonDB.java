@@ -1,6 +1,7 @@
 package model;
 
 public final class SingletonDB {
+    //Clase singleton. Instancia de las credenciales de acceso a la base de datos
 
     private static SingletonDB instance;
 

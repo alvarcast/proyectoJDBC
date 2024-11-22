@@ -6,27 +6,26 @@ import model.SingletonDB;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class SuperCtrl {
 
+    //Inicio y fin de programa. Unica cose que llama el main
     public static void runProgram(){
         startProgram();
         endProgram();
     }
 
+    //Primero comprueba si la IP está en la blacklist, y si esta, acaba este metodo y empieza endProgram()
     private static void startProgram(){
         FileReader fr = null;
         BufferedReader br = null;
-        ArrayList<String> lines = new ArrayList<String>();
 
         String externalIP = "";
         String cadena;
         boolean banned = false;
 
         try {
-            externalIP = ExternalIpFetcher.getExternalIP();
-            System.out.println(externalIP);
+            externalIP = IpManager.getExternalIP();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -60,6 +59,7 @@ public class SuperCtrl {
             }
         }
 
+        //Si no esta en la blacklist, seguir con el programa
         if (!banned){
             try{
                 SingletonDB db_instance = SingletonDB.getInstance();
@@ -74,6 +74,7 @@ public class SuperCtrl {
         }
     }
 
+    //Metodo de fin de programa. Cierra la conexion
     private static void endProgram(){
         Connex.close();
     }

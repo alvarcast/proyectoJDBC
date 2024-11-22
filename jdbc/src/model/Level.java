@@ -1,6 +1,7 @@
 package model;
 
 public class Level {
+    //Clase para entradas de la tabla level
 
     private int lid;
     private String user;
@@ -14,6 +15,7 @@ public class Level {
     private int beaten;
     private String start_date;
 
+    //Constructor para imprimir niveles sin ver el usuario
     public Level(int lid, int game_id, String level_name, String creator, String music, String difficulty, float diff_num, int attempts, int beaten, String start_date) {
         this.lid = lid;
         this.game_id = game_id;
@@ -27,6 +29,7 @@ public class Level {
         this.start_date = start_date;
     }
 
+    //Constructor para imprimir niveles viendo el usuario
     public Level(int lid, String username, int game_id, String level_name, String creator, String music, String difficulty, float diff_num, int attempts, int beaten, String start_date) {
         this.lid = lid;
         this.user = username;
@@ -41,6 +44,7 @@ public class Level {
         this.start_date = start_date;
     }
 
+    //Constructor para imprimir niveles favoritos, de eso el (formated) de favourite levels, porque uso esta clase en vez de la suya propia
     public Level(int game_id, String level_name, String creator, String music, String difficulty) {
         this.game_id = game_id;
         this.level_name = level_name;

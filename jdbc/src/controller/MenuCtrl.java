@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 public class MenuCtrl {
 
+    //Metodo para hacer login como usuario en local y en la BD
     public static User login() throws SQLException{
         int uid;
         String username;
@@ -55,6 +56,7 @@ public class MenuCtrl {
         return new User(uid, username, password);
     }
 
+    //Metodo para hacer un nuevo usuario en local y en la BD
     public static User signIn() throws SQLException{
         ResultSet rs;
         int uid;
@@ -66,19 +68,26 @@ public class MenuCtrl {
         String password;
         String repeat;
 
-        name = Scan.scanText("Real name: ");
-        surname = Scan.scanText("Surname: ");
+        do {
+            name = Scan.scanText("Real name: ");
+        } while (InputValidation.countChar(50, name));
+
+        do {
+            surname = Scan.scanText("Surname: ");
+        } while (InputValidation.countChar(50, name));
 
         do{
             email = Scan.scanText("E-Mail: ");
-        } while (DbManager.checkDupe("personal_info", "uid", "email", email));
+        } while (DbManager.checkDupe("personal_info", "uid", "email", email) && InputValidation.countChar(100, email));
 
         do{
             username = Scan.scanText("Username: ");
-        } while (DbManager.checkDupe("user", "uid", "username", username));
+        } while (DbManager.checkDupe("user", "uid", "username", username) && InputValidation.countChar(50, username));
 
         do{
-            password = Scan.scanText("Password: ");
+            do {
+                password = Scan.scanText("Password: ");
+            } while (InputValidation.countChar(30, password));
             repeat = Scan.scanText("Repeat password: ");
             if (!password.equals(repeat)){
                 System.err.println("The passwords do not match, try again");
@@ -102,6 +111,7 @@ public class MenuCtrl {
         return new User(uid, username, password);
     }
 
+    //Metodo para hacer añadir un nivel a la BD
     public static void addLevel(User u) throws SQLException{
         String query;
 
@@ -115,12 +125,21 @@ public class MenuCtrl {
         int beaten = 0;
         String start_date;
 
-        game_id = DbManager.checkGameId(u);
+        do {
+            game_id = DbManager.checkGameId(u);
+        } while (InputValidation.countChar(11, game_id));
 
-        level_name = DbManager.checkLevelName(u);
+        do {
+            level_name = DbManager.checkLevelName(u);
+        } while (InputValidation.countChar(20, level_name));
 
-        creator = Scan.scanText("Creator:");
-        music = Scan.scanText("Song:");
+        do {
+            creator = Scan.scanText("Creator:");
+        } while (InputValidation.countChar(20, creator));
+
+        do {
+            music = Scan.scanText("Song:");
+        } while (InputValidation.countChar(100, music));
 
         difficulty = InputValidation.checkNumRange(1, 5, difficulty, """
                     
@@ -134,7 +153,10 @@ public class MenuCtrl {
         ;
 
         diff_num = InputValidation.checkNumRange(1, 35, diff_num, "Introduce the numerical difficulty (GDDL):");
-        attempts = Scan.scanInt("Introduce the current number of attempts:");
+
+        do {
+            attempts = Scan.scanInt("Introduce the current number of attempts:");
+        } while (InputValidation.countChar(11, attempts));
 
         start_date = askDate();
 
@@ -157,6 +179,7 @@ public class MenuCtrl {
         System.out.println("The level " + level_name + " was added correctly to your level list");
     }
 
+    //Metodo para marcar un nivel como completado y añadir su informacion post-completado a la tabla beaten_levels
     public static void beat(User u) throws SQLException{
         String query;
         int lid;
@@ -171,41 +194,46 @@ public class MenuCtrl {
 
         lid = DbManager.checkIfBeaten(u);
 
-        music_rate = InputValidation.checkNumRange(0, 10, music_rate, "Music rating (0-10):");
+        if (lid != -1){
+            music_rate = InputValidation.checkNumRange(0, 10, music_rate, "Music rating (0-10):");
 
-        gameplay_rate = InputValidation.checkNumRange(0, 10, gameplay_rate, "Gameplay rating (0-10):");
+            gameplay_rate = InputValidation.checkNumRange(0, 10, gameplay_rate, "Gameplay rating (0-10):");
 
-        deco_rate = InputValidation.checkNumRange(0, 10, deco_rate, "Decoration rating (0-10):");
+            deco_rate = InputValidation.checkNumRange(0, 10, deco_rate, "Decoration rating (0-10):");
 
-        fx_rate = InputValidation.checkNumRange(0, 10, fx_rate, "Effects rating (0-10):");
+            fx_rate = InputValidation.checkNumRange(0, 10, fx_rate, "Effects rating (0-10):");
 
-        enjoyment = (music_rate + gameplay_rate + deco_rate + fx_rate) / 4;
+            enjoyment = (music_rate + gameplay_rate + deco_rate + fx_rate) / 4;
 
-        total_attempts = Scan.scanInt("Total attempts:");
+            do {
+                total_attempts = Scan.scanInt("Total attempts:");
+            } while (InputValidation.countChar(11, total_attempts));
 
-        end_date = askDate();
+            end_date = askDate();
 
-        query = "INSERT INTO beaten_level (lid, music_rate, gameplay_rate, deco_rate, fx_rate, enjoyment, total_attempts, end_date) " +
-                "VALUES ('" + lid + "','" +
-                music_rate + "','" +
-                gameplay_rate + "','" +
-                deco_rate + "','" +
-                fx_rate + "','" +
-                enjoyment + "','" +
-                total_attempts + "','" +
-                end_date +
-                "');"
-        ;
+            query = "INSERT INTO beaten_level (lid, music_rate, gameplay_rate, deco_rate, fx_rate, enjoyment, total_attempts, end_date) " +
+                    "VALUES ('" + lid + "','" +
+                    music_rate + "','" +
+                    gameplay_rate + "','" +
+                    deco_rate + "','" +
+                    fx_rate + "','" +
+                    enjoyment + "','" +
+                    total_attempts + "','" +
+                    end_date +
+                    "');"
+            ;
 
-        DbManager.runSQL(query, false);
+            DbManager.runSQL(query, false);
 
-        query = "UPDATE level SET beaten = 1 WHERE lid = '" + lid + "';";
+            query = "UPDATE level SET beaten = 1 WHERE lid = '" + lid + "';";
 
-        DbManager.runSQL(query, false);
+            DbManager.runSQL(query, false);
 
-        System.out.println("The level was added to the completion list correctly");
+            System.out.println("The level was added to the completion list correctly");
+        }
     }
 
+    //Metodo para añadir niveles a favoritos en la tabla fav_demons
     public static void addFav(User u) throws SQLException{
         int lid;
         String query;
@@ -214,10 +242,9 @@ public class MenuCtrl {
 
         query = "INSERT INTO fav_demons (uid, lid) VALUES ('" + u.getUid() + "','" + lid + "');";
         DbManager.runSQL(query, false);
-
-        System.out.println("The level was added correctly to your favourites");
     }
 
+    //Metodo para preguntar fecha. Si se pone una fecha personalizada, llama a InputValidation.checkDate()
     private static String askDate(){
         int option;
         String date;
@@ -245,6 +272,7 @@ public class MenuCtrl {
         return date;
     }
 
+    //Metodo que añade los niveles y niveles completados del usuario a listas, y llama a Printer para imprimirlos
     public static void viewLevels(User u) throws SQLException{
         LevelList levelList = new LevelList();
         BeatenLevelList beatenLevelList = new BeatenLevelList();
@@ -317,6 +345,7 @@ public class MenuCtrl {
         Printer.printLevels(levelList, beatenLevelList, false);
     }
 
+    //Metodo que añade los niveles favoritos a una lista de niveles y llama a Printer para imprimirlos
     public static void viewFavourites(User u) throws SQLException{
         LevelList levelList = new LevelList();
         ArrayList<Integer> lidsList = new ArrayList<Integer>();
@@ -357,6 +386,7 @@ public class MenuCtrl {
         Printer.printFavourites(levelList);
     }
 
+    //Metodo que añade cada tabla a una lista de objetos con atributos iguales a sus columnas. Crea objeto mega (todas las listas) y llama a printer para imprimirlo.
     public static void viewDataBase() throws SQLException{
         UserList ul = new UserList();
         PersonalInfoList pil = new PersonalInfoList();
@@ -502,6 +532,7 @@ public class MenuCtrl {
         Printer.printAll(new MegaClass(ul, pil, ll, bll, fll, dl), false);
     }
 
+    //Metodo para actualizar datos de la tabla level
     public static void manageLevelUpdate(User u) throws SQLException{
         String query = "";
         String param;
@@ -532,19 +563,27 @@ public class MenuCtrl {
 
         query = switch (option) {
             case 1 -> {
-                paramInt = DbManager.checkGameId(u);
+                do {
+                    paramInt = DbManager.checkGameId(u);
+                } while (InputValidation.countChar(11, paramInt));
                 yield "UPDATE level SET game_id = '" + paramInt + "' WHERE lid = '" + lid + "';";
             }
             case 2 -> {
-                param = DbManager.checkLevelName(u);
+                do {
+                    param = DbManager.checkLevelName(u);
+                } while (InputValidation.countChar(20, param));
                 yield "UPDATE level SET level_name = '" + param + "' WHERE lid = '" + lid + "';";
             }
             case 3 -> {
-                param = Scan.scanText("Creator: ");
+                do {
+                    param = Scan.scanText("Creator: ");
+                } while (InputValidation.countChar(20, param));
                 yield "UPDATE level SET creator = '" + param + "' WHERE lid = '" + lid + "';";
             }
             case 4 -> {
-                param = Scan.scanText("Music: ");
+                do {
+                    param = Scan.scanText("Music: ");
+                } while (InputValidation.countChar(100, param));
                 yield "UPDATE level SET music = '" + param + "' WHERE lid = '" + lid + "';";
             }
             case 5 -> {
@@ -565,7 +604,9 @@ public class MenuCtrl {
                 yield "UPDATE level SET diff_num = '" + paramFloat + "' WHERE lid = '" + lid + "';";
             }
             case 7 -> {
-                paramInt = Scan.scanInt("Number of attempts: ");
+                do {
+                    paramInt = Scan.scanInt("Number of attempts: ");
+                } while (InputValidation.countChar(11, paramInt));
                 yield "UPDATE level SET attempts = '" + paramInt + "' WHERE lid = '" + lid + "';";
             }
             case 8 -> {
@@ -575,11 +616,13 @@ public class MenuCtrl {
             default -> query;
         };
 
-        DbManager.runSQL(query, false);
-
-        System.out.println("The level was updated correctly");
+        if (option != 9){
+            DbManager.runSQL(query, false);
+            System.out.println("The level was updated correctly");
+        }
     }
 
+    //Metodo para borrar datos de la tabla level. Primero borra las dependencias
     public static void deleteLevel(User u) throws SQLException{
         String query;
         int option = 0;
@@ -604,11 +647,12 @@ public class MenuCtrl {
         }
     }
 
+    //Metodo para actualizar datos de la tabla beaten_levels
     public static void manageBeatenLevelUpdate(User u) throws SQLException{
         ResultSet rs;
         String query;
         String param;
-        int paramInt = 0;
+        int paramInt;
         float paramFloat = 0;
 
         int option = 0;
@@ -653,7 +697,9 @@ public class MenuCtrl {
                     yield "UPDATE beaten_level SET fx_rate = '" + paramFloat + "' WHERE lid = '" + lid + "';";
                 }
                 case 5 -> {
-                    paramInt = Scan.scanInt("Total atempts: ");
+                    do {
+                        paramInt = Scan.scanInt("Total atempts: ");
+                    } while (InputValidation.countChar(11, paramInt));
                     yield "UPDATE beaten_level SET total_attempts = '" + paramInt + "' WHERE lid = '" + lid + "';";
                 }
                 case 6 -> {
@@ -663,14 +709,16 @@ public class MenuCtrl {
                 default -> query;
             };
 
-            DbManager.runSQL(query, false);
-
-            System.out.println("The beaten level was updated correctly");
+            if (option != 7){
+                DbManager.runSQL(query, false);
+                System.out.println("The beaten level was updated correctly");
+            }
         } else {
             System.err.println("That level is unbeaten, make sure to beat it first to edit it's ratings");
         }
     }
 
+    //Metodo para des-completar un nivel. Lo borra de beaten_levels e iguala beaten a 0 (de x nivel)
     public static void unBeat(User u) throws SQLException{
         ResultSet rs;
         String query;
@@ -701,6 +749,7 @@ public class MenuCtrl {
         }
     }
 
+    //Metodo para quitar de favoritos un nivel
     public static void unFavourite(User u) throws SQLException{
         ResultSet rs;
         String query;
@@ -729,6 +778,7 @@ public class MenuCtrl {
         }
     }
 
+    //Metodo para actualizar datos de la tabla user
     public static void manageUserUpdate(User u) throws SQLException{
         String query = "";
         String param;
@@ -749,13 +799,15 @@ public class MenuCtrl {
             case 1 -> {
                 do{
                     param = Scan.scanText("New username: ");
-                } while (DbManager.checkDupe("user", "uid", "username", param));
+                } while (DbManager.checkDupe("user", "uid", "username", param) && InputValidation.countChar(50, param));
                 u.setUsername(param);
                 yield "UPDATE user SET username = '" + param + "' WHERE uid = '" + u.getUid() + "';";
             }
             case 2 -> {
                 do{
-                    param = Scan.scanText("New password: ");
+                    do {
+                        param = Scan.scanText("New password: ");
+                    } while (InputValidation.countChar(30, param));
                     repeatParam = Scan.scanText("Repeat password: ");
                     if (!param.equals(repeatParam)){
                         System.err.println("The passwords do not match, try again");
@@ -769,10 +821,13 @@ public class MenuCtrl {
             default -> query;
         };
 
-        DbManager.runSQL(query, false);
-        System.out.println("The information was updated correctly");
+        if (option != 3){
+            DbManager.runSQL(query, false);
+            System.out.println("The information was updated correctly");
+        }
     }
 
+    //Metodo para borrar la cuenta. Sale del programa si se acepta (sin System.exit(0))
     public static void deleteUser(User u) throws SQLException{
         ArrayList<Integer> userLevels;
         String query;
@@ -803,6 +858,7 @@ public class MenuCtrl {
         }
     }
 
+    //Metodo para actualizar datos de la tabla personal_info
     public static void managePersonalInformationUpdate(User u) throws SQLException{
         String query = "";
         String param;
@@ -821,17 +877,21 @@ public class MenuCtrl {
 
         query = switch (option) {
             case 1 -> {
-                param = Scan.scanText("Name: ");
+                do {
+                    param = Scan.scanText("Name: ");
+                } while (InputValidation.countChar(50, param));
                 yield "UPDATE personal_info SET name = '" + param + "' WHERE uid = '" + u.getUid() + "';";
             }
             case 2 -> {
-                param = Scan.scanText("Surname: ");
+                do {
+                    param = Scan.scanText("Surname: ");
+                } while (InputValidation.countChar(50, param));
                 yield "UPDATE personal_info SET surname = '" + param + "' WHERE uid = '" + u.getUid() + "';";
             }
             case 3 -> {
                 do{
                     param = Scan.scanText("E-Mail: ");
-                } while (DbManager.checkDupe("personal_info", "uid", "email", param));
+                } while (DbManager.checkDupe("personal_info", "uid", "email", param) && InputValidation.countChar(100, param));
                 yield "UPDATE personal_info SET email = '" + param + "' WHERE uid = '" + u.getUid() + "';";
             }
             default -> query;
@@ -841,6 +901,7 @@ public class MenuCtrl {
         System.out.println("The information was updated correctly");
     }
 
+    //Metodo que consige los ids de la tabla level de x usuario y los devuelve en un arraylist
     public static ArrayList<Integer> getUserEntries(User u) throws SQLException{
         ArrayList<Integer> userLevels = new ArrayList<Integer>();
         ResultSet rs;
@@ -856,6 +917,7 @@ public class MenuCtrl {
         return userLevels;
     }
 
+    //Metodo para hacer una busqueda tipo google de todos los datos string de la BD
     public static void googleSearch() throws SQLException{
         ArrayList<String> searchResult = new ArrayList<String>();
         String query;
@@ -907,6 +969,7 @@ public class MenuCtrl {
         Printer.printSearchResult(searchResult);
     }
 
+    //Metodo para añadir un resultado de busqueda (string) de tipo google a X arraylist
     public static void addToSearchResult(ArrayList<String> searchResult, String query, String column) throws SQLException{
         ResultSet rs;
         rs = DbManager.runSQL(query, true);
@@ -916,6 +979,7 @@ public class MenuCtrl {
         }
     }
 
+    //Metodo para buscar en un rango de fechas en la tabla level
     public static void dateSearch(User u) throws SQLException{
         LevelList ll = new LevelList();
         BeatenLevelList bll = new BeatenLevelList();
@@ -995,6 +1059,7 @@ public class MenuCtrl {
         Printer.printLevels(ll, bll, true);
     }
 
+    //Metodo para encontrar registros nulos. Usa el mismo Printer que viewDataBase()
     public static void findNull() throws SQLException{
         UserList ul = new UserList();
         PersonalInfoList pil = new PersonalInfoList();

@@ -3,6 +3,7 @@ package model;
 import java.util.ArrayList;
 
 public class FavouriteLevelList {
+    //Clase para poder acceder desde listas a la tabla fav_demons
 
     private ArrayList<FavouriteLevel> favouriteLevelList = new ArrayList<FavouriteLevel>();
 

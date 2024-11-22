@@ -1,6 +1,7 @@
 package model;
 
 public class User {
+    //Clase para entradas de la tabla user
 
     private int uid;
     private String username;

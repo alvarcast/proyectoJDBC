@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class Connex {
+    //Clase singleton para la conexion. Usa la clase SingletonDB para las credenciales. Muy util ya que puedo ccerrar la instancia de la conexion desde donde quiera con el metodo close()
 
     private static Connex instance;
 

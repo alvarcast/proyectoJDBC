@@ -1,6 +1,7 @@
 package model;
 
 public class FavouriteLevel {
+    //Clase para entradas de la tabla fav_demons
 
     private String username;
     private String level_name;

@@ -3,6 +3,7 @@ package model;
 import java.util.ArrayList;
 
 public class LevelList {
+    //Clase para poder acceder desde listas a la tabla level
 
     private ArrayList<Level> levelList = new ArrayList<Level>();
 

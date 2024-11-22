@@ -1,6 +1,7 @@
 package model;
 
 public class MegaClass {
+    //Clase con todas las listas de tosas las tablas para imprimir toda la base de datos
 
     private UserList userList;
     private PersonalInfoList personalInfoList;

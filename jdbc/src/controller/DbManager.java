@@ -11,6 +11,7 @@ import java.sql.*;
 
 public class DbManager {
 
+    //Metodo para ejecutar cualquier consulta sql
     public static ResultSet runSQL(String sql, boolean noUpdate) {
         Connex connex_instance;
 
@@ -36,6 +37,7 @@ public class DbManager {
         return rs;
     }
 
+    //Metodo para comprobar si el username o el correo ya estan en uso
     public static boolean checkDupe(String table, String tableReturn, String column, String param) throws SQLException{
         ResultSet rs;
         String query;
@@ -53,102 +55,85 @@ public class DbManager {
         return dupe;
     }
 
+    //Metodo para comprobas si un nivel ya ha sido pasado
     public static int checkIfBeaten(User u) throws SQLException{
         ResultSet rs;
         String level_name;
         int lid;
         String query;
-        boolean out = false;
 
         level_name = Scan.scanText("Level name: ");
 
-        do{
-            lid = getLevelId(u, level_name);
+        lid = getLevelId(u, level_name);
 
-            query = "SELECT lid FROM beaten_level WHERE lid = '" + lid + "';";
-            rs = DbManager.runSQL(query, true);
+        query = "SELECT lid FROM beaten_level WHERE lid = '" + lid + "';";
+        rs = DbManager.runSQL(query, true);
 
-            if (rs.next()){
-                System.err.println("That level is already marked as beaten, please try again.");
-                level_name = Scan.scanText("Level name: ");
-            } else {
-                out = true;
-            }
-        } while (!out);
+        if (rs.next()){
+            System.err.println("That level is already marked as beaten");
+            lid = -1;
+        }
 
         return lid;
     }
 
+    //Metodo para comprobas si un nivel ya ha sido añadido
     public static String checkLevelName(User u) throws SQLException{
         ResultSet rs;
         String level_name;
         String query;
-        boolean out = false;
 
         level_name = Scan.scanText("Level name: ");
 
-        do{
-            query = "SELECT level_name FROM level WHERE level_name = '" + level_name + "' AND uid = '" + u.getUid() + "';";
-            rs = DbManager.runSQL(query, true);
+        query = "SELECT level_name FROM level WHERE level_name = '" + level_name + "' AND uid = '" + u.getUid() + "';";
+        rs = DbManager.runSQL(query, true);
 
-            if (rs.next()){
-                System.err.println("This level was already added, please try again");
-                level_name = Scan.scanText("Level name: ");
-            } else {
-                out = true;
-            }
-        } while (!out);
+        if (rs.next()){
+            System.err.println("This level was already added, please try again");
+        }
 
         return level_name;
     }
 
+    //Metodo para comprobas si un game_id ya ha esta en uso
     public static int checkGameId(User u) throws SQLException{
         int game_id;
         String query;
-        boolean out = false;
 
         game_id = Scan.scanInt("Game ID: ");
 
-        do{
-            query = "SELECT game_id FROM level WHERE game_id = '" + game_id + "' AND uid = '" + u.getUid() + "';";
-            ResultSet rs = DbManager.runSQL(query, true);
+        query = "SELECT game_id FROM level WHERE game_id = '" + game_id + "' AND uid = '" + u.getUid() + "';";
+        ResultSet rs = DbManager.runSQL(query, true);
 
-            if (rs.next()){
-                System.err.println("This level ID was already added, please try again");
-                game_id = Scan.scanInt("Game ID: ");
-            } else {
-                out = true;
-            }
-        } while (!out);
+        if (rs.next()){
+            System.err.println("This level ID was already added, please try again");
+        }
 
         return game_id;
     }
 
+    //Metodo para comprobas si un nivel ya ha sido añadido a favoritos
     public static int checkFavourite(User u) throws SQLException{
         int lid;
         String query;
         String level_name;
-        boolean out = false;
 
         level_name = Scan.scanText("Level name: ");
         lid = getLevelId(u, level_name);
 
-        do{
-            query = "SELECT lid FROM fav_demons WHERE lid = '" + lid + "';";
-            ResultSet rs = DbManager.runSQL(query, true);
+        query = "SELECT lid FROM fav_demons WHERE lid = '" + lid + "';";
+        ResultSet rs = DbManager.runSQL(query, true);
 
-            if (rs.next()){
-                System.err.println("This level ID was already added, please try again");
-                level_name = Scan.scanText("Level name: ");
-                lid = getLevelId(u, level_name);
-            } else {
-                out = true;
-            }
-        } while (!out);
+        if (rs.next()){
+            System.err.println("This level was already added to favourites");
+        } else {
+            System.out.println("The level was added correctly to your favourites");
+        }
 
         return lid;
     }
 
+    //Metodo para conseguir el id de un nivel con su nombre
     public static int getLevelId(User u, String level_name) throws SQLException{
         ResultSet rs;
         int lid = 0;
@@ -168,39 +153,38 @@ public class DbManager {
         return lid;
     }
 
+    //Metodo para exportar la base de datos a la carpeta sqldump
+    //Hecho con chatGPT, stackOverflow, documentación de mysql y cuatro horas de prueba y error
     public static void exportDB(){
-        //Creditos: ChatGPT, stackOverflow, documentación de mysql y cuatro horas de mi tiempo
+        BufferedReader br;
+        String line;
 
-        // Define MySQL credentials and export file path
-        String host = "localhost";  // MySQL server host
-        String port = "3306";       // MySQL server port
-        String user = "root";       // MySQL username
-        String database = "gd_demons"; // Database to export
-        String exportPath = "C:/Users/alvar/Documents/proyectoJDBC/gd_demons_dump.sql"; // Destination SQL file path
+        String host = "localhost";
+        String port = "3306";
+        String user = "root";
+        String database = "gd_demons";
+        String exportPath = "sqldump/gd_demons_dump.sql";
 
-        // Construct the mysqldump command
+        //Comando para el process
         String command = String.format(
                 "mysqldump --host=%s --port=%s --user=%s %s -r %s",
                 host, port, user, database, exportPath
         );
 
         try {
-            // Execute the command
+            //Ejecuto el comando
             Process process = Runtime.getRuntime().exec(command);
 
-            // Capture the output or error stream
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                System.out.println(line);  // Print output for debugging
+            br = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            while ((line = br.readLine()) != null) {
+                System.out.println(line);  //Salida
             }
 
-            // Wait for the process to complete
             int exitCode = process.waitFor();
             if (exitCode == 0) {
                 System.out.println("Database export successful! File saved to " + exportPath);
             } else {
-                System.err.println("Error occurred during export. Exit code: " + exitCode);
+                System.err.println("Error occurred during export. Exit code: " + exitCode); //Error de mysqldump
             }
 
         } catch (IOException | InterruptedException e) {

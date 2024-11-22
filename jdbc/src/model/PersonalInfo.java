@@ -1,6 +1,7 @@
 package model;
 
 public class PersonalInfo {
+    //Clase para entradas de la tabla personal_info
 
     private String username;
     private String name;

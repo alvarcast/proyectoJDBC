@@ -11,11 +11,4 @@ EXTRA
 1. Export SQL
 2. Blacklist de usuarios malardos (Filtro sqlinjection)
 
-T = 32h~
-
-//TODO
-
-- BLACKLIST (FICHERO) DE NOMBRES DE USUARIO BANEADOS (PUNTO 2 EXTRA)
-- COMENTAR Y OPTIMIZAR CÓDIGO
-- REFERENCIAR COSAS (enhanced for, enhanced switch y yield, singleton, patterns de chatgpt)
-- Insert stuff
+T = 38h~

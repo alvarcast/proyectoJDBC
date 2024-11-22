@@ -3,6 +3,7 @@ package model;
 import java.util.ArrayList;
 
 public class PersonalInfoList {
+    //Clase para poder acceder desde listas a la tabla personal_info
 
     private ArrayList<PersonalInfo> personalInfoList = new ArrayList<PersonalInfo>();
 

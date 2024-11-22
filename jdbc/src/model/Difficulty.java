@@ -1,6 +1,7 @@
 package model;
 
 public class Difficulty {
+    //Clase para entradas de la tabla demon_difficulties
 
     private int did;
     private String diff_name;

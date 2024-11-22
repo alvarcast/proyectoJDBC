@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 public class Printer {
 
+    //Metodo para imprimir niveles con sus listas
     public static void printLevels(LevelList ll, BeatenLevelList bll, boolean asResult){
         String beaten;
         String inex;
@@ -77,6 +78,7 @@ public class Printer {
         }
     }
 
+    //Metodo para imprimir niveles favoritos con su lista
     public static void printFavourites(LevelList ll) {
         if (!ll.getLevelList().isEmpty()){
             System.out.println("<<< Favourite levels (formated) >>>");
@@ -100,6 +102,7 @@ public class Printer {
         }
     }
 
+    //Metodo para imprimir la base de datos entera, la salida cambia si se estan buscando nulos o simplemente imprimiendo la BD
     public static void printAll(MegaClass mega, boolean checkingNulls){
         String beaten;
 
@@ -261,6 +264,7 @@ public class Printer {
         }
     }
 
+    //Metodo para imprimir resultados de la busqueda tipo google
     public static void printSearchResult(ArrayList<String> searchResult){
         if (!searchResult.isEmpty()){
             System.out.println("<<< Search result >>>");

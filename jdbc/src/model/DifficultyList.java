@@ -3,6 +3,7 @@ package model;
 import java.util.ArrayList;
 
 public class DifficultyList {
+    //Clase para poder acceder desde listas a la tabla demon_difficulties
 
     private ArrayList<Difficulty> difficultieList = new ArrayList<Difficulty>();
 
