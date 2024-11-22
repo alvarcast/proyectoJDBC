@@ -2,8 +2,6 @@ package controller;
 
 import view.Scan;
 
-import java.util.Arrays;
-
 public class InputValidation {
 
     //Metodo para validar un numero entero dentro de un rango
@@ -60,10 +58,10 @@ public class InputValidation {
         vetados [6] = " like ";
         vetados [7] = " join ";
 
-        if(!input.isEmpty()){
-            if (Arrays.toString(vetados).toLowerCase().contains(input)){
+        for (int i = 0; i < 8; i++){
+            if(input.indexOf(vetados[i]) >= 0){
                 tryHack = true;
-                System.err.println("Trying to SQLInject? Banned ;D");
+                System.err.println("Trying to SQL inject? Get banned lol :D");
             }
         }
 

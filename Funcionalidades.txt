@@ -1,0 +1,23 @@
+Funcionalidades del programa dadas:
+
+OBLIGATORIO
+1. CRUD (HECHO)
+2. Mostrar todos los datos (HECHO)
+3. Buscar por fechas (HECHO)
+4. Buscar registros rotos(HECHO)
+5. Buscador tipo google (HECHO)
+
+EXTRA
+1. Export SQL (HECHO)
+2. Blacklist de usuarios baneados (HECHO)
+
+Adicionalmente, mi programa tiene las siguientes funcionalidades:
+
+1. Encripción de contraseñas
+2. Creación de usuarios e inicio de sesión
+3. Consultas personalizadas para los usuarios con sesión iniciada
+4. Baneo de usuarios por IP pública al intentar hacer SQL inject
+5. Comprobación completa de los valores dados para que no haya errores de ese tipo (longitud de cadenas, tipo de valor, valores existentes, valores vetados)
+6. Clases Singleton para instancias globales de las credenciales de la base de datos y la conexión
+7. Captura de todos los errores sql por 1 método
+8. Clase Printer para imprimir los resultados deseados

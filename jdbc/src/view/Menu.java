@@ -51,7 +51,7 @@ public class Menu {
                 3. Add a level to favourites
                 4. Show data
                 5. Manage levels
-                6. Search level
+                6. Search
                 7. Find broken (null) entries
                 8. Account settings
                 9. Export DB to SQL

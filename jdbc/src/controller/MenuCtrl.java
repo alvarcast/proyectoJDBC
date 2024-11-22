@@ -835,7 +835,7 @@ public class MenuCtrl {
 
         userLevels = getUserEntries(u);
 
-        option = InputValidation.checkNumRange(1, 2, option, "Are you sure you want to delete this your account? Tis will delete all your data (1 = Yes || 2 = No)");
+        option = InputValidation.checkNumRange(1, 2, option, "Are you sure you want to delete your account? Tis will delete all your data (1 = Yes || 2 = No)");
 
         if (option == 1){
             query = "DELETE FROM personal_info WHERE uid = '" + u.getUid() + "';";

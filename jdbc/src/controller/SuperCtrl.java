@@ -70,7 +70,7 @@ public class SuperCtrl {
 
             ErrorHandler.handle();
         } else {
-            System.err.println("You are banned >:(");
+            System.err.println("You are banned >:( Get out of my program or I will dox you!");
         }
     }
 

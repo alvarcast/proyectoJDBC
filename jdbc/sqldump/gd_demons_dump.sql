@@ -44,7 +44,7 @@ CREATE TABLE `beaten_level` (
 
 LOCK TABLES `beaten_level` WRITE;
 /*!40000 ALTER TABLE `beaten_level` DISABLE KEYS */;
-INSERT INTO `beaten_level` VALUES (3,4,10,10,10,10,10,2000,'2023-11-12'),(11,9,10,10,10,10,10,320,'2024-10-02'),(12,10,9,10,10,8.5,9.375,879,'2024-11-22');
+INSERT INTO `beaten_level` VALUES (3,4,10,10,10,10,10,2000,'2023-11-12'),(11,9,10,10,10,10,10,370,'2024-10-02'),(12,10,9,10,10,8.5,9.375,879,'2024-11-22');
 /*!40000 ALTER TABLE `beaten_level` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -134,7 +134,7 @@ CREATE TABLE `level` (
 
 LOCK TABLES `level` WRITE;
 /*!40000 ALTER TABLE `level` DISABLE KEYS */;
-INSERT INTO `level` VALUES (2,8,111368620,'Adelucid','MannyHeffley','Adelucid',5,26,2000,0,'2024-11-18'),(4,8,93549959,'Mystic Bounds','gmdmann','Mystic Bounds',5,20.59,2000,1,'2023-09-01'),(8,8,95089240,'CONNECT','MCres','CONNECT',5,32,0,0,'2025-01-01'),(9,8,110653463,'commatose','rply','commatose',4,15.87,320,1,'2024-10-01'),(10,12,97493518,'And ever','galofuf','Royal Azalea',1,2.71,145,1,'2024-11-22'),(11,12,44062068,'Future Funk','JonathanGD','Whats a Future Funk?',3,12.86,1267,0,'2020-02-15');
+INSERT INTO `level` VALUES (2,8,111368620,'Adelucid','MannyHeffley','Adelucid',5,26,2000,0,'2024-11-18'),(4,8,93549959,'Mystic Bounds','gmdmann','Mystic Bounds',5,20.59,2000,1,'2023-09-01'),(8,8,95089240,'CONNECT','MCres','CONNECT',5,32,0,NULL,'2025-01-01'),(9,8,110653463,'commatose','rply','commatose',4,15.87,320,1,'2024-10-01'),(10,12,97493518,'And ever','galofuf','Royal Azalea',1,2.71,145,1,'2024-11-22'),(11,12,44062068,'Future Funk','JonathanGD','Whats a Future Funk?',3,12.86,1267,0,'2020-02-15');
 /*!40000 ALTER TABLE `level` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -177,7 +177,7 @@ CREATE TABLE `user` (
   `username` varchar(50) DEFAULT NULL,
   `password` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`uid`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -199,4 +199,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-11-22 11:38:04
+-- Dump completed on 2024-11-22 15:16:38

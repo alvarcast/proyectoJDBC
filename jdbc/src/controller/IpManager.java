@@ -7,7 +7,7 @@ import java.net.URL;
 
 public class IpManager {
 
-    //Metodo para conseguir la ip pública del usuario
+    //Metodo para conseguir la ip publica del usuario
     //Hecho con chatGPT y https://docs.oracle.com/javase/6/docs/api/java/net/URL.html
     public static String getExternalIP() throws Exception {
         HttpURLConnection connection;
